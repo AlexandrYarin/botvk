@@ -4,7 +4,7 @@ from telebot import types
 import json
 import time
 
-href = '/home/yar/botvk/support/'
+href = '/home/ya/Документы/Projects/vkproject/support/'
 with open(href + 'config.json', 'r') as file: conf = json.load(file)
 
 TOKEN, CHAT_ID = conf['account']['token_tg'] , conf['techconf']['chat_id']
