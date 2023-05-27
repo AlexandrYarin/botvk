@@ -1,6 +1,6 @@
 import psycopg2 as db
 import json
-href = '/home/ya/Документы/Projects/vkproject/support/'
+href = '/home/yar/botvk/support/'
 
 with open(href + 'config.json', 'r') as file: conf = json.load(file)
 co_data = conf['connect'] 
