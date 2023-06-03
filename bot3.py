@@ -1,8 +1,11 @@
 import telebot
 from telebot.types import InputMediaPhoto
 from telebot import types
+from telebot import util
+
 import json
 import time
+
 
 href = '/home/ya/Документы/Projects/vkproject/support/'
 with open(href + 'config.json', 'r') as file: conf = json.load(file)
@@ -52,7 +55,7 @@ def formatting(data_dict: dict) -> tuple or list:
     for key in data_dict.keys():
         
         text = data_dict[key]['tag'].upper() + '\n' + data_dict[key]['text']
-        text = text[:1023]
+        text = text if len(text) > 1024 else util.smart_split(text)
 
         if len(data_dict[key]['pages']) == 0:
 
@@ -64,12 +67,20 @@ def formatting(data_dict: dict) -> tuple or list:
             pages = data_dict[key]['pages']
         
             for i, page in enumerate(pages):
-                if i == 0:
-                    media.append(InputMediaPhoto(page, caption=text)) 
+                if type(text) is not list:
+                    if i == 0:
+                        media.append(InputMediaPhoto(page, caption=text)) 
+                    else:
+                        media.append(InputMediaPhoto(page))
                 else:
-                    media.append(InputMediaPhoto(page))
-        
-            row_list.append(media)
+                    if i == 0:
+                        media.append(InputMediaPhoto(page, caption=text[0])) 
+                    else:
+                        media.append(InputMediaPhoto(page))
+                    
+                    media.append(text[1:])
+                
+                row_list.append(media)
     
     return row_list
 
@@ -91,25 +102,54 @@ def send_content():
         try:
             print('trying')
             if type(arg) != tuple:
-                bot.send_media_group(chat_id=CHAT_ID, media=arg)
-                time.sleep(3)
+                if arg[-1] is list:
+                    bot.send_media_group(chat_id=CHAT_ID, media=arg[:-1])
+                    time.sleep(1)
+                    for text in arg[-1]:
+                        bot.send_message(chat_id=CHAT_ID, text=text)
+                else:
+                    bot.send_media_group(chat_id=CHAT_ID, media=arg)
+                    time.sleep(3)
+            
             else:
-                bot.send_photo(chat_id=CHAT_ID,
+                if arg[1] is str:
+                    bot.send_photo(chat_id=CHAT_ID,
                                     photo=arg[0],
                                     caption=arg[1])
+                else:
+                    bot.send_photo(chat_id=CHAT_ID,
+                                    photo=arg[0],
+                                    caption=arg[1][0])
+                    for text in arg[1][1:]:
+                        bot.send_message(chat_id=CHAT_ID, text=text)
         #предпологается ошибка RetryAfter                            
         except Exception as e:
             print(e)
             print('error')
             n_sec = int(str(e).split(' ')[-2])
             time.sleep(n_sec + 3)
-            if type(arg) == types.MediaGroup :
-                bot.send_media_group(chat_id=CHAT_ID, media=arg)
-                time.sleep(3)
+
+            if type(arg) != tuple:
+                if arg[-1] is list:
+                    bot.send_media_group(chat_id=CHAT_ID, media=arg[:-1])
+                    time.sleep(1)
+                    for text in arg[-1]:
+                        bot.send_message(chat_id=CHAT_ID, text=text)
+                else:
+                    bot.send_media_group(chat_id=CHAT_ID, media=arg)
+                    time.sleep(3)
+            
             else:
-                bot.send_photo(chat_id=CHAT_ID,
+                if arg[1] is str:
+                    bot.send_photo(chat_id=CHAT_ID,
                                     photo=arg[0],
                                     caption=arg[1])
+                else:
+                    bot.send_photo(chat_id=CHAT_ID,
+                                    photo=arg[0],
+                                    caption=arg[1][0])
+                    for text in arg[1][1:]:
+                        bot.send_message(chat_id=CHAT_ID, text=text)
 
     #ставим единицу в postgres тем постам, которые были отправлены в группу
     update_table()

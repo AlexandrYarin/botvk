@@ -105,12 +105,12 @@ def splitting(answer:object, val_posts:int, relevant_list: list) -> dict:
                     elem['photo']['sizes'][-1]['url'] \
                         for elem in content if elem['type'] == 'photo'
                         ]
-            #check avalible the race (we dont need the race,yet)
+            #check avalible video(we dont need the video yet)
             if len(pages) == 0:
                 pages.append(pass_links[tag])
 
             #finally text
-            text = post['text'] if len(post['text']) > 0 else '⚡️'
+            text = post['text'] if len(post['text']) > 0 else ''
             
             #----------------------------------------------------------
             
@@ -157,12 +157,6 @@ def create_and_insert(result):
     except Exception as e:
         print(e)
         conn.rollback()
-
-#create_and_insert(result)
-
-
-#del not_relevant_post
-#gc.collect()
 
 def parsing():
     #list of text that alredy exist in db
