@@ -8,7 +8,7 @@ import json
 
 
 href = '/home/ya/Документы/Projects/vkproject/support/'
-VALUE = 40
+VALUE = 100
 
 def clean_table():
     

@@ -97,7 +97,7 @@ def send_content():
                 bot.send_photo(chat_id=CHAT_ID,
                                     photo=arg[0],
                                     caption=arg[1])
-        #предпологается ошибка RetryAfter                            )
+        #предпологается ошибка RetryAfter                            
         except Exception as e:
             print(e)
             print('error')
