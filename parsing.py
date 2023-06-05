@@ -5,7 +5,7 @@ import psycopg2 as db
 import json
 import gc
 
-href = '/home/ya/Документы/Projects/vkproject/support/'
+href = '/home/yar/botvk/support/'
 
 #load config
 with open(href + 'config.json', 'r') as file: conf = json.load(file)
